@@ -9,8 +9,8 @@ const usersRouter = require('./src/routes/users');
 app.use(express.json());
 app.use(midlleware)
 app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+    res.send('Hello World1');
+})
 app.use("/users", usersRouter)
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
