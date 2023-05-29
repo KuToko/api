@@ -30,6 +30,7 @@ const userRegister = async (req, res) => {
           const validate = v.validate(data, schema);
           if (validate.length) {
               return res.status(400).json({
+                  error : true,
                   message: "error",
                   data: validate
               });
@@ -39,17 +40,20 @@ const userRegister = async (req, res) => {
               const uniqueEmail = await users.findOne({where: {email: data.email}});
               if (uniqueEmail) {
                   return res.status(400).json({
+                      error : true,
                       message: "error",
                       data: "email already exist"
                   });
               }
               await users.create(data);
               res.status(201).json({
+                  error : false,
                   message: "success",
                   data: data
               });
           } catch (err) {
               res.status(500).json({
+                  error : true,
                   message: "error",
                   data: "internal server error"
               });

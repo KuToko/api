@@ -9,6 +9,7 @@ const auth = (req, res, next) => {
     jwt.verify(bearerToken, jwtSecret, (err, data) => {
       if (err) {
         return res.status(403).json({
+          error : true,
           message: "error",
           data: "forbidden"
         });
@@ -16,8 +17,9 @@ const auth = (req, res, next) => {
       req.userData = data;
        next();
     });
-  }{
-    return res.status(401).json({
+  }else {
+    res.status(401).json({
+        error : true,
         message: "error",
         data: "unauthorized"
     });
