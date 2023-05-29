@@ -14,13 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   users.init({
-    uuid: DataTypes.UUID,
     username: DataTypes.STRING,
     name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    is_superadmin: DataTypes.STRING
+    is_super_admin: DataTypes.BOOLEAN,
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
   }, {
+    timestamps: false,
     sequelize,
     modelName: 'users',
   });
