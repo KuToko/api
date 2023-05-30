@@ -1,13 +1,15 @@
 const {users} = require('../../models');
+const {tokens} = require('../../models');
 const bycrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const uuid = require('uuid');
 const validator = require('fastest-validator');
 require('dotenv').config();
 
 const jwtSecret = process.env.JWT_SECRET;
 
 
-const userLogin = async (req, res) => {
+    const userLogin = async (req, res) => {
     const data = {
         email: req.body.email,
         password: req.body.password
@@ -25,6 +27,7 @@ const userLogin = async (req, res) => {
         });
     }
     try {
+
         const user = await users.findOne({where: {email: data.email}});
         if (!user) {
             return res.status(400).json({
@@ -39,18 +42,39 @@ const userLogin = async (req, res) => {
                 data: "email or password is wrong"
             });
         }
-        const token = jwt.sign({
+        const cekToken = await tokens.findOne({where: {user_id: user.id}});
+        if (cekToken) {
+            await tokens.destroy({where: {user_id: user.id}});
+        }
+        const createtoken = jwt.sign({
             id: user.id,
             email: user.email,
             username : user.username,
-        },jwtSecret, {expiresIn: '30h'});
+        },jwtSecret);
+
+        if (!createtoken) {
+            return res.status(500).json({
+                message: "error",
+                data: "internal server error"
+            });
+        }
+        await tokens.create({
+            id: uuid.v4(),
+            user_id: user.id,
+            token: createtoken,
+            created_at: new Date(),
+            expired_at: Date.now() +(86400000*7),
+            updated_at: new Date()
+        });
+
         res.status(200).json({
             message: "success",
             data: {
-                token : token
+                token : createtoken,
             }
         });
     } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: "error",
             data: err

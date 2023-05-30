@@ -3,7 +3,8 @@ require('dotenv').config();
 const PORT = process.env.PORT || 4000;
 const app = express();
 const midlleware = require('./src/midleware/midleware');
-const usersRouter = require('./src/routes/users');
+const authRouters = require('./src/routes/auth');
+const userRouters = require('./src/routes/user');
 
 
 app.use(express.json());
@@ -11,7 +12,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('Hello World1');
 })
-app.use("/users", usersRouter)
+app.use("/auth", authRouters);
+app.use("/user",userRouters);
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
