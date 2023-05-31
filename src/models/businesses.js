@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class business extends Model {
+  class businesses extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,9 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      businesses.hasMany(models.business_categories, {foreignKey: 'business_id'});
     }
   }
-  business.init({
+  businesses.init({
     claim_by: DataTypes.UUID,
     created_by: DataTypes.UUID,
     province_id: DataTypes.UUID,
@@ -26,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     avatar: DataTypes.STRING,
     description: DataTypes.STRING,
     released_at: DataTypes.DATE,
-    google_maps_ranting: DataTypes.FLOAT,
+    google_maps_rating: DataTypes.FLOAT,
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
     deleted_at: DataTypes.DATE,
@@ -46,10 +47,10 @@ module.exports = (sequelize, DataTypes) => {
     wednesday_end_time: DataTypes.TIME,
     wednesday_notes: DataTypes.STRING,
 
-    is_thrusday_open: DataTypes.BOOLEAN,
-    thrusday_start_time: DataTypes.TIME,
-    thrusday_end_time: DataTypes.TIME,
-    thrusday_notes: DataTypes.STRING,
+    is_thursday_open: DataTypes.BOOLEAN,
+    thursday_start_time: DataTypes.TIME,
+    thursday_end_time: DataTypes.TIME,
+    thursday_notes: DataTypes.STRING,
 
     is_friday_open: DataTypes.BOOLEAN,
     friday_start_time: DataTypes.TIME,
@@ -72,8 +73,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false,
     sequelize,
-    modelName: 'business',
+    modelName: 'businesses',
   });
   
-  return business;
+  return businesses;
 };

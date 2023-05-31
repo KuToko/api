@@ -5,7 +5,7 @@ const app = express();
 const midlleware = require('./src/midleware/midleware');
 const authRouters = require('./src/routes/auth');
 const userRouters = require('./src/routes/user');
-const storeRouters = require('./src/routes/store');
+const businessRouters = require('./src/routes/business');
 
 
 app.use(express.json());
@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 })
 app.use("/auth", authRouters);
 app.use("/user",userRouters);
-app.use("/store",storeRouters);
+app.use("/business",businessRouters);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
