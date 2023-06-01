@@ -9,4 +9,5 @@ router.get('/:id', middleware.auth, auth.findById);
 router.get('/username/:username', middleware.auth, auth.findByUsername);
 router.put('/:id', middleware.auth, auth.update);
 
+
 module.exports = router;

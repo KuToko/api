@@ -85,9 +85,9 @@ const update = async (req, res) =>{
     }
 
    const schema = {
-        username: {type: "string", max: 250, optional: true},
-        name   : {type: "string", max: 255, optional: true},
-        email  : {type: "email", optional: true},
+        username: {type: "string", max: 250, optional: false},
+        name   : {type: "string", max: 255, optional: false},
+        email  : {type: "email", optional: false},
         password: {type: "string", min: 8, max: 255, optional: true},
     }
     const v = new validator();

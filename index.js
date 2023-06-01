@@ -6,6 +6,8 @@ const midlleware = require('./src/midleware/midleware');
 const authRouters = require('./src/routes/auth');
 const userRouters = require('./src/routes/user');
 
+const upvoteRouters = require('./src/routes/upvote');
+
 
 app.use(express.json());
 // app.use(midlleware)
@@ -15,6 +17,7 @@ app.get('/', (req, res) => {
 app.use("/auth", authRouters);
 app.use("/user",userRouters);
 
+app.use("/upvote", upvoteRouters);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
