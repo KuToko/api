@@ -4,8 +4,13 @@ const uuid = require("uuid");
 
 
 const findAll=async (req, res) => {
+    const limit = 2;
+    const offset = req.query.page * limit;
+
     try {
         const data = await upvotes.findAll({
+            limit: limit,
+            offset: offset,
             include: {
                 model: businesses,
                 attributes: ["name"],
@@ -22,7 +27,12 @@ const findAll=async (req, res) => {
         res.status(200).json({
             error: false,
             message: "success",
-            data: data
+            data: {
+                data,
+                pagination: {
+                    page: req.query.page,
+                }
+            }
         });
     }catch (error) {
         console.log(error);
@@ -34,6 +44,7 @@ const findAll=async (req, res) => {
 }
 
 const findByUserId = async (req, res) => {
+
     const userId = req.params.id;
     try {
         const data = await upvotes.findAll({

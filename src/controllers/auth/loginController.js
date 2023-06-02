@@ -74,10 +74,9 @@ const jwtSecret = process.env.JWT_SECRET;
             }
         });
     } catch (err) {
-        console.log(err);
         res.status(500).json({
             message: "error",
-            data: err
+            data: "internal server error"
         });
     }
 }

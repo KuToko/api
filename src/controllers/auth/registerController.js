@@ -5,15 +5,14 @@ const bcrypt = require('bcrypt');
 
 
 const userRegister = async (req, res) => {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
 
     const data = {
               id: uuid.v4(),
               username: req.body.username,
               name: req.body.name,
               email: req.body.email,
-              password: hashedPassword,
+              password: req.body.password,
               is_super_admin: req.body.is_super_admin || false,
               created_at: new Date(),
               updated_at: new Date(),
@@ -37,6 +36,8 @@ const userRegister = async (req, res) => {
           }
 
           try {
+              const salt = await bcrypt.genSalt(10);
+              const hashedPassword = await bcrypt.hash(data.password, salt);
               const uniqueEmail = await users.findOne({where: {email: data.email}});
               if (uniqueEmail) {
                   return res.status(400).json({
