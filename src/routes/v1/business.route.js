@@ -1,0 +1,9 @@
+const express = require('express');
+const middleware = require('../../middleware/auth');
+const businessController = require("../../controllers/business.controller");
+const router = express.Router();
+
+router.get('/',middleware.auth, businessController.list);
+router.get('/:id',middleware.auth, businessController.detail);
+
+module.exports = router;
