@@ -1,7 +1,7 @@
 const DB = require('../config/knex');
 const validator = require('fastest-validator');
 const moment = require('moment');
-const { userId } = require('../helpers/helpers');
+const helpers = require('../helpers/helpers');
 
 const list = async (req, res) => {
     try {
@@ -64,12 +64,9 @@ const store = async (req, res) => {
                 data: validate
             });
         }
-        const token = req.headers.authorization;
-        // console.log(token);
-        console.log(userId(req));
         const feedback = await DB('feedbacks').insert({
             business_id: params.business_id,
-            user_id: userId(req),
+            user_id: helpers.getUserId(req),
             feedbacks: params.feedbacks,
             created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
         });
