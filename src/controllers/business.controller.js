@@ -4,11 +4,13 @@ const { QueryTypes } = require('sequelize');
 const Sequelize = require('sequelize');
 const DB = require('../config/knex');
 const moment = require('moment');
+const helpers = require('../helpers/helpers');
 
 const validator = require('fastest-validator');
 
 
 const list = async (req, res) => {
+    const user_id = helpers.getUserId(req);
     try {
         const latitude = req.query.latitude;
         const longitude = req.query.longitude;
@@ -38,6 +40,7 @@ const list = async (req, res) => {
             'businesses.name',
             'businesses.google_maps_rating',
             DB.raw(`case when businesses.avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
+            DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ?) is null then 'false' else 'true' end as is_voted`, [user_id]),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
               6371 * ACOS(
@@ -65,7 +68,7 @@ const list = async (req, res) => {
           .orWhere('categories.name', 'like', `%${q}%`)
           .groupBy('businesses.id', 'businesses.name')
           .orderBy('distance_in_m')
-          .paginate({perPage: 10, currentPage: page})          
+          .paginate({perPage: 10, currentPage: page});
         
         return res.status(200).json({
             error: false,
