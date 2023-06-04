@@ -6,22 +6,22 @@ require('dotenv').config();
 const auth = async (req, res, next) => {
   const bearerHeader = req.headers.authorization;
   if (bearerHeader) {
-      const tokencek = await tokens.findOne({where: {token: bearerHeader.split(" ")[1]}});
-        if(!tokencek){
+      const token = await tokens.findOne({where: {token: bearerHeader.split(" ")[1]}});
+        if(!token){
             return res.status(403).json({
                 error : true,
                 message: "errors",
                 data: "forbidden"
             });
         }
-        if (tokencek.expired_at < Date.now()) {
+        if (token.expired_at < Date.now()) {
             return res.status(403).json({
                 error : true,
                 message: "token expired",
                 data: "forbidden"
             });
         }
-    const verifyToken = tokencek.token;
+    const verifyToken = token.token;
      jwt.verify(verifyToken, jwtSecret, (err, data) => {
       if (err) {
         return res.status(403).json({

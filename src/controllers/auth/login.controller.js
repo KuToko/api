@@ -7,8 +7,6 @@ const validator = require('fastest-validator');
 require('dotenv').config();
 
 const jwtSecret = process.env.JWT_SECRET;
-
-
     const userLogin = async (req, res) => {
     const data = {
         email: req.body.email,

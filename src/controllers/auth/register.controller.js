@@ -14,8 +14,8 @@ const userRegister = async (req, res) => {
               email: req.body.email,
               password: req.body.password,
               is_super_admin: req.body.is_super_admin || false,
-              created_at: new Date(),
-              updated_at: new Date(),
+              created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+              updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
           };
 
           const schema = {

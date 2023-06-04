@@ -1,12 +1,13 @@
-const {users, upvotes, businesses} = require("../../models");
+const {users, upvotes, businesses} = require("../models");
 const validator = require("fastest-validator");
 const uuid = require("uuid");
+const helper = require('../helpers/helpers')
+const moment = require("moment");
 
 
-const findAll=async (req, res) => {
-    const limit = 2;
+const list=async (req, res) => {
+    const limit = 10;
     const offset = req.query.page * limit;
-
     try {
         const data = await upvotes.findAll({
             limit: limit,
@@ -30,7 +31,10 @@ const findAll=async (req, res) => {
             data: {
                 data,
                 pagination: {
-                    page: req.query.page,
+                    perPage:limit,
+                    currentPage: req.query.page,
+                    from : offset,
+                    to:offset + limit
                 }
             }
         });
@@ -43,23 +47,35 @@ const findAll=async (req, res) => {
     }
 }
 
-const findByUserId = async (req, res) => {
+const detail = async (req, res) => {
+    const param = req.params.id;
+    const scema={
+        param : {type: "string", min:36, max:36, optional: false}
+    }
+    const v = new validator();
+    const validate = v.validate({param}, scema);
+    if (validate.length) {
+        return res.status(400).json({
+            error: true,
+            message: "error",
+            data: "id not valid"
+        });
+    }
 
-    const userId = req.params.id;
     try {
-        const data = await upvotes.findAll({
-            include:[
-                {
-                model: users,
+        const data = await upvotes.findByPk(param,{
+
+            include:[ {
+                model: businesses,
                 attributes: ["name"],
                 required: true
             },
                 {
-                    model: businesses,
-                    attributes: ["name"],
+                    model: users,
+                    attributes: ["username"],
                     required: true
                 }
-            ],
+            ]
         });
         if (!data) {
             return res.status(404).json({
@@ -68,6 +84,7 @@ const findByUserId = async (req, res) => {
                 data: null
             });
         }
+
         res.status(200).json({
             error: false,
             message: "success",
@@ -81,19 +98,12 @@ const findByUserId = async (req, res) => {
         });
     }
 }
-
-const createVote = async (req, res) => {
-    const userId = req.params.id;
+const store = async (req, res) => {
     const data={
-        id: uuid.v4(),
-        user_id: userId,
-        business_id: req.body.business_id,
-        created_at: new Date().toISOString().replace(/T/, " ").replace(/\..+/, ""),
-        updated_at: new Date().toISOString().replace(/T/, " ").replace(/\..+/, "")
+            business_id: req.body.business_id,
     }
-
     const schema = {
-        business_id: {type: "string", optional: false, max: "100"},
+        business_id: {type: "string", optional: false, min: "36", max: "36"},
     }
     const v = new validator();
     const validateRes = v.validate(data, schema);
@@ -101,22 +111,30 @@ const createVote = async (req, res) => {
         return res.status(400).json({
             error: true,
             message: "validation error",
-            data: validateRes
+            data: "business_id not valid"
         });
     }
     try {
-        // console.log(data);
-        await upvotes.create({
-            id: data.id,
-            user_id: data.user_id,
+        const business = await businesses.findByPk(data.business_id);
+        if (!business) {
+            return res.status(404).json({
+                error: true,
+                message: "business not found",
+                data: null
+            });
+        }
+
+      const created =  await upvotes.create({
+            id: uuid.v4(),
+            user_id: helper.getUserId(req),
             business_id: data.business_id,
-            created_at: data.created_at,
-            updated_at: data.updated_at
+            created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+            updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
         });
         res.status(200).json({
             error: false,
             message: "success",
-            data: data
+            data: created
         });
     }catch (error) {
         console.log(error);
@@ -125,10 +143,23 @@ const createVote = async (req, res) => {
             message: "internal server error",
         });
     }
-}
+};
 
-const deleteVote = async (req, res) => {
+const destroy = async (req, res) => {
     const id = req.params.id;
+
+    const schema = {
+        id: {type: "string", optional: false, min: "36"},
+    }
+    const v = new validator();
+    const validateRes = v.validate({id}, schema);
+    if (validateRes.length) {
+        return res.status(400).json({
+            error: true,
+            message: "validation error",
+            data: "id not valid"
+        });
+    }
     try {
         const data = await upvotes.destroy({where: {id: id}});
         if (!data) {
@@ -152,8 +183,8 @@ const deleteVote = async (req, res) => {
     }
 }
 module.exports ={
-    findAll,
-    findByUserId,
-    createVote,
-    deleteVote
+    list,
+    detail,
+    store,
+    destroy
 }

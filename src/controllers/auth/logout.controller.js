@@ -9,7 +9,7 @@ const logout = async (req, res) => {
             return res.status(400).json({
                 error : true,
                 message: "error",
-                data: "token not found"
+                data: "please login"
             });
         }
         await tokens.destroy({where: {token: token}});
