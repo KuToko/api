@@ -22,8 +22,7 @@ const list=async (req, res) => {
             },
             where: {user_id: idUser},
         });
-        console.log(data);
-        console.log(idUser);
+        
         if (!data) {
             return res.status(404).json({
                 error: true,
