@@ -4,9 +4,9 @@ const midleware = require("../../middleware/auth");
 
 const router = express.Router();
 
-router.get('/', midleware.auth, upvoteRoutes.list);
-router.get("/:id", midleware.auth, upvoteRoutes.detail);
-router.post("/", midleware.auth, upvoteRoutes.store);
-router.delete("/:id", midleware.auth, upvoteRoutes.destroy);
+router.get('/', midleware.auth, upvoteRoutes.list); //by user
+// router.get("/:id", midleware.auth, upvoteRoutes.detail); // gaperlu
+router.post("/", midleware.auth, upvoteRoutes.store); // add
+router.delete("/:id", midleware.auth, upvoteRoutes.destroy); // hapus
 
 module.exports = router;

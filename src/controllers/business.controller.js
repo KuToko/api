@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const { QueryTypes } = require('sequelize');
 const Sequelize = require('sequelize');
 const DB = require('../config/knex');
+const moment = require('moment');
 
 const validator = require('fastest-validator');
 

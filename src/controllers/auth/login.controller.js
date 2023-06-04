@@ -68,6 +68,10 @@ const jwtSecret = process.env.JWT_SECRET;
         res.status(200).json({
             message: "success",
             data: {
+                avatar: "https://via.placeholder.com/450/DBDBDB?text=" + user.name,
+                username: user.username,
+                email: user.email,
+                name: user.name,
                 token : createtoken,
             }
         });

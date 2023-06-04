@@ -2,6 +2,7 @@ const { users } = require('../../models');
 const uuid= require('uuid');
 const validator = require('fastest-validator');
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 
 
 const userRegister = async (req, res) => {

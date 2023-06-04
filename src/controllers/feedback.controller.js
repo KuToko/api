@@ -64,12 +64,13 @@ const store = async (req, res) => {
                 data: validate
             });
         }
-        const feedback = await DB('feedbacks').insert({
+        const feedback = {
             business_id: params.business_id,
             user_id: helpers.getUserId(req),
             feedbacks: params.feedbacks,
             created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-        });
+        }
+        const insert = await DB('feedbacks').insert(feedback);
 
         return res.status(200).json({
             error: false,

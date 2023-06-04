@@ -8,8 +8,10 @@ const moment = require("moment");
 const list=async (req, res) => {
     const limit = 10;
     const offset = req.query.page * limit;
+    const idUser = helper.getUserId(req);
     try {
         const data = await upvotes.findAll({
+            where: {user_id: idUser},
             limit: limit,
             offset: offset,
             include: {
@@ -25,6 +27,15 @@ const list=async (req, res) => {
                 data: null
             });
         }
+
+        if (data.length === 0) {
+            return res.status(200).json({
+                error: false,
+                message: "upvote not found",
+                data: []
+            });
+        }
+
         res.status(200).json({
             error: false,
             message: "success",
@@ -98,12 +109,13 @@ const detail = async (req, res) => {
         });
     }
 }
-const store = async (req, res) => {
+const store = async (req, res) => {    
     const data={
             business_id: req.body.business_id,
     }
+    console.log(data);
     const schema = {
-        business_id: {type: "string", optional: false, min: "36", max: "36"},
+        business_id: {type: "string", optional: false, min: "36", max: "36"}
     }
     const v = new validator();
     const validateRes = v.validate(data, schema);
@@ -115,6 +127,14 @@ const store = async (req, res) => {
         });
     }
     try {
+        const isVoted = await upvotes.findAll({where: {business_id: req.body.business_id, user_id: helper.getUserId(req)}});
+        if (isVoted.length) {
+            return res.status(400).json({
+                error: true,
+                message: "validation error",
+                data: "you already voted"
+            });
+        }
         const business = await businesses.findByPk(data.business_id);
         if (!business) {
             return res.status(404).json({
