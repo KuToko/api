@@ -40,7 +40,7 @@ const list = async (req, res) => {
             'businesses.name',
             'businesses.google_maps_rating',
             DB.raw(`case when businesses.avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
-            DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ?) is null then 'false' else 'true' end as is_voted`, [user_id]),
+            DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ? limit 1) is null then 'false' else 'true' end as is_voted`, [user_id]),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
               6371 * ACOS(
