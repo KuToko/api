@@ -6,20 +6,24 @@ const moment = require("moment");
 
 
 const list=async (req, res) => {
-    const limit = 10;
-    const offset = req.query.page * limit;
+
     const idUser = helper.getUserId(req);
+
+    const offset = (req.query.page - 1) * 10;
+    const limit = 10;
     try {
         const data = await upvotes.findAll({
-            where: {user_id: idUser},
             limit: limit,
             offset: offset,
             include: {
                 model: businesses,
-                attributes: ["name"],
+                attributes: ["name", "id"],
                 required: true
-            }
+            },
+            where: {user_id: idUser},
         });
+        console.log(data);
+        console.log(idUser);
         if (!data) {
             return res.status(404).json({
                 error: true,
