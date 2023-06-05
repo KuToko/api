@@ -4,7 +4,7 @@ const feedbackController = require("../../controllers/feedback.controller");
 const router = express.Router();
 
 router.get('/',middleware.auth, feedbackController.list);
-router.post('/store',middleware.auth, feedbackController.store);
+router.post('/',middleware.auth, feedbackController.store);
 // router.get('/:id',middleware.auth, feedbackController.detail);
 // router.patch('/:id',middleware.auth, feedbackController.update);
 // router.delete('/:id',middleware.auth, feedbackController.delete);
