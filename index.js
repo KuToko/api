@@ -1,17 +1,28 @@
 const express = require('express');
 require('dotenv').config();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 const app = express();
-const midlleware = require('./src/midleware/midleware');
-const usersRouter = require('./src/routes/users');
+const cors = require('cors');
+const fileUpload = require('express-fileupload');
+const routesV1 = require('./src/routes/v1');
+const DB = require('./src/config/knex');
+const { attachPaginate } = require('knex-paginate');
+attachPaginate();
 
 
+app.use(fileUpload({
+    limits: {
+        fileSize: 5000000, // 5 MB limit
+    },
+    abortOnLimit: true,
+}));
 app.use(express.json());
-app.use(midlleware)
+app.use(cors());
 app.get('/', (req, res) => {
     res.send('Hello World1');
 })
-app.use("/users", usersRouter)
+app.use("/v1", routesV1);
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
