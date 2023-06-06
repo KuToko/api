@@ -2,4 +2,3 @@ node_modules
 .env
 .idea
 serviceAccount.json
-./src/public/upload/

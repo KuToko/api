@@ -4,6 +4,7 @@ const businessController = require("../../controllers/business.controller");
 const router = express.Router();
 
 router.get('/',middleware.auth, businessController.list);
+router.get('/search',middleware.auth, businessController.search);
 router.get('/:id',middleware.auth, businessController.detail);
 
 module.exports = router;
