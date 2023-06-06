@@ -19,7 +19,7 @@ app.use(fileUpload({
 app.use(express.json());
 app.use(cors());
 app.get('/', (req, res) => {
-    res.send('Hello World1');
+    res.send('Hello World1 test');
 })
 app.use("/v1", routesV1);
 
