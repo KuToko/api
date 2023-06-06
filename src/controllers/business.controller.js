@@ -188,6 +188,7 @@ const detail = async (req, res) => {
 
 const list = async (req, res) => {
     const user_id = helpers.getUserId(req);
+    const total_row = req.query.total_row;
     try {
         const latitude = req.query.latitude;
         const longitude = req.query.longitude;
@@ -241,7 +242,7 @@ const list = async (req, res) => {
           .join('categories', 'business_categories.category_id', '=', 'categories.id')
           .groupBy('businesses.id', 'businesses.name')
           .orderBy('distance_in_m')
-          .paginate({perPage: 10, currentPage: page});
+          .paginate({perPage: total_row, currentPage: page});
         
         return res.status(200).json({
             error: false,
