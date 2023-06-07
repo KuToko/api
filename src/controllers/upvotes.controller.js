@@ -22,7 +22,7 @@ const list=async (req, res) => {
             },
             where: {user_id: idUser},
         });
-        
+
         if (!data) {
             return res.status(404).json({
                 error: true,
@@ -112,7 +112,7 @@ const detail = async (req, res) => {
         });
     }
 }
-const store = async (req, res) => {    
+const store = async (req, res) => {
     const data={
             business_id: req.body.business_id,
     }
@@ -154,7 +154,7 @@ const store = async (req, res) => {
             created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
             updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
         });
-        res.status(200).json({
+        res.status(201).json({
             error: false,
             message: "success",
             data: created
