@@ -44,6 +44,7 @@ const recommendationByUser = async (req, res) => {
             'businesses.google_maps_rating',
             DB.raw(`case when businesses.avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
             DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ? limit 1) is null then 'false' else 'true' end as is_voted`, [user_id]),
+            DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
               6371 * ACOS(
@@ -67,6 +68,7 @@ const recommendationByUser = async (req, res) => {
           .from('businesses')
           .join('business_categories', 'businesses.id', '=', 'business_categories.business_id')
           .join('categories', 'business_categories.category_id', '=', 'categories.id')
+          .innerJoin('upvotes', 'upvotes.business_id', 'businesses.id')
           .where('businesses.id', 'in', data)
           .groupBy('businesses.id', 'businesses.name')
           .paginate({perPage: total_row, currentPage: page});
@@ -122,6 +124,7 @@ const recommendationByBusiness = async (req, res) => {
           'businesses.google_maps_rating',
           DB.raw(`case when businesses.avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
           DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ? limit 1) is null then 'false' else 'true' end as is_voted`, [user_id]),
+          DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
           DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
           DB.raw(`
             6371 * ACOS(
@@ -145,6 +148,7 @@ const recommendationByBusiness = async (req, res) => {
         .from('businesses')
         .join('business_categories', 'businesses.id', '=', 'business_categories.business_id')
         .join('categories', 'business_categories.category_id', '=', 'categories.id')
+        .innerJoin('upvotes', 'upvotes.business_id', 'businesses.id')
         .where('businesses.id', 'in', data)
         .groupBy('businesses.id', 'businesses.name')
         .paginate({perPage: total_row, currentPage: page});

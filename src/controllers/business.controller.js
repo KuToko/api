@@ -42,6 +42,7 @@ const search = async (req, res) => {
             'businesses.google_maps_rating',
             DB.raw(`case when businesses.avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
             DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ? limit 1) is null then 'false' else 'true' end as is_voted`, [user_id]),
+            DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
               6371 * ACOS(
@@ -65,6 +66,7 @@ const search = async (req, res) => {
           .from('businesses')
           .join('business_categories', 'businesses.id', '=', 'business_categories.business_id')
           .join('categories', 'business_categories.category_id', '=', 'categories.id')
+          .innerJoin('upvotes', 'upvotes.business_id', 'businesses.id')
           .where('businesses.name', 'like', `%${q}%`)
           .orWhere('categories.name', 'like', `%${q}%`)
           .groupBy('businesses.id', 'businesses.name')
@@ -151,7 +153,7 @@ const detail = async (req, res) => {
               'businesses.added_from_system',
               'businesses.link_theme',
               DB.raw("json_agg(json_build_object('id', categories.id, 'name', categories.name)) AS categories"),
-              DB.raw("count(upvotes.id) AS upvotes"),
+              DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
               'users.id AS user_id',
               'users.name AS user_name',
               'users.email AS user_email'
@@ -218,6 +220,7 @@ const list = async (req, res) => {
             'businesses.google_maps_rating',
             DB.raw(`case when businesses.avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
             DB.raw(`case when (select user_id from upvotes where business_id = businesses.id and user_id = ? limit 1) is null then 'false' else 'true' end as is_voted`, [user_id]),
+            DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
               6371 * ACOS(
@@ -241,6 +244,7 @@ const list = async (req, res) => {
           .from('businesses')
           .join('business_categories', 'businesses.id', '=', 'business_categories.business_id')
           .join('categories', 'business_categories.category_id', '=', 'categories.id')
+          .innerJoin('upvotes', 'upvotes.business_id', 'businesses.id')
           .groupBy('businesses.id', 'businesses.name')
           .orderBy('distance_in_m')
           .paginate({perPage: total_row, currentPage: page});
