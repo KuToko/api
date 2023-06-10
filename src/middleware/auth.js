@@ -21,18 +21,19 @@ const auth = async (req, res, next) => {
                 data: "forbidden"
             });
         }
-    const verifyToken = token.token;
-     jwt.verify(verifyToken, jwtSecret, (err, data) => {
-      if (err) {
-        return res.status(403).json({
-          error : true,
-          message: "expired",
-          data: "forbidden"
-        });
-      }
-      req.userData = data;
-       next();
-    });
+        next();
+    // const verifyToken = token.token;
+    //  jwt.verify(verifyToken, jwtSecret, (err, data) => {
+    //   if (err) {
+    //     return res.status(403).json({
+    //       error : true,
+    //       message: "expired",
+    //       data: "forbidden"
+    //     });
+    //   }
+    //   req.userData = data;
+    //    next();
+    // });
   }else {
     res.status(401).json({
         error : true,
