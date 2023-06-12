@@ -3,54 +3,26 @@ const validator = require("fastest-validator");
 const uuid = require("uuid");
 const helper = require('../helpers/helpers')
 const moment = require("moment");
+const DB = require('../config/knex');
 
 
 const list=async (req, res) => {
 
-    const idUser = helper.getUserId(req);
 
-    const offset = (req.query.page - 1) * 10;
+    const page = req.query.page;
     const limit = 10;
     try {
-        const data = await upvotes.findAll({
-            limit: limit,
-            offset: offset,
-            include: {
-                model: businesses,
-                attributes: ["name", "id"],
-                required: true
-            },
-            where: {user_id: idUser},
-        });
+        const idUser = helper.getUserId(req);
         
-        if (!data) {
-            return res.status(404).json({
-                error: true,
-                message: "upvote not found",
-                data: null
-            });
-        }
-
-        if (data.length === 0) {
-            return res.status(200).json({
-                error: false,
-                message: "upvote not found",
-                data: []
-            });
-        }
+        const votes = await DB('upvotes')
+        .where({user_id: idUser})
+        .paginate({perPage: limit, currentPage: page});
 
         res.status(200).json({
             error: false,
             message: "success",
-            data: {
-                data,
-                pagination: {
-                    perPage:limit,
-                    currentPage: req.query.page,
-                    from : offset,
-                    to:offset + limit
-                }
-            }
+            data: votes.data,
+            pagination: votes.pagination
         });
     }catch (error) {
         console.log(error);
@@ -116,7 +88,6 @@ const store = async (req, res) => {
     const data={
             business_id: req.body.business_id,
     }
-    console.log(data);
     const schema = {
         business_id: {type: "string", optional: false, min: "36", max: "36"}
     }
@@ -130,7 +101,7 @@ const store = async (req, res) => {
         });
     }
     try {
-        const isVoted = await upvotes.findAll({where: {business_id: req.body.business_id, user_id: helper.getUserId(req)}});
+        const isVoted = await DB('upvotes').where({business_id: req.body.business_id, user_id: helper.getUserId(req)});
         if (isVoted.length) {
             return res.status(400).json({
                 error: true,
@@ -138,7 +109,8 @@ const store = async (req, res) => {
                 data: "you already voted"
             });
         }
-        const business = await businesses.findByPk(data.business_id);
+        // const business = await businesses.findByPk(data.business_id);
+        const business = await DB('businesses').where({id: data.business_id})
         if (!business) {
             return res.status(404).json({
                 error: true,
@@ -147,13 +119,12 @@ const store = async (req, res) => {
             });
         }
 
-      const created =  await upvotes.create({
-            id: uuid.v4(),
+        const created =  await DB('upvotes').insert({
             user_id: helper.getUserId(req),
             business_id: data.business_id,
             created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
             updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
-        });
+        })
         res.status(200).json({
             error: false,
             message: "success",
