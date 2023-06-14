@@ -101,7 +101,8 @@ const store = async (req, res) => {
         });
     }
     try {
-        const isVoted = await DB('upvotes').where({business_id: req.body.business_id, user_id: helper.getUserId(req)});
+        const {user_id} = await helper.getUserId(req);        
+        const isVoted = await DB('upvotes').where({business_id: req.body.business_id, user_id: user_id});
         if (isVoted.length) {
             return res.status(400).json({
                 error: true,
@@ -120,7 +121,7 @@ const store = async (req, res) => {
         }
 
         const created =  await DB('upvotes').insert({
-            user_id: helper.getUserId(req),
+            user_id: user_id,
             business_id: data.business_id,
             created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
             updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
@@ -128,7 +129,6 @@ const store = async (req, res) => {
         res.status(200).json({
             error: false,
             message: "success",
-            data: created
         });
     }catch (error) {
         console.log(error);

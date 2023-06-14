@@ -10,7 +10,6 @@ const helpers = require('../helpers/helpers');
 const validator = require('fastest-validator');
 
 const recommendationByUser = async (req, res) => {
-    const user_id = helpers.getUserId(req);
     const latitude = req.query.latitude;
     const longitude = req.query.longitude;
     const page = req.query.page
@@ -33,8 +32,14 @@ const recommendationByUser = async (req, res) => {
       }
 
     try {
-        const request = await axios.get(`https://recommender.kutoko.id/v1/users/${user_id}/recommendation`)
-        const data = request.data.data;
+      const {user_id} = await helpers.getUserId(req);
+        const token = process.env.ML_TOKEN;
+        $request = await axios.get(`https://recommender.kutoko.id/v1/users/${user_id}/recommendation`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }})
+        
+        const data = $request.data.data;
 
         const url = "https://via.placeholder.com/450/DBDBDB?text=";
 
@@ -89,7 +94,7 @@ const recommendationByUser = async (req, res) => {
 }
 
 const recommendationByBusiness = async (req, res) => {
-  const user_id = helpers.getUserId(req);
+  const {user_id} = await helpers.getUserId(req);
   const business_id = req.params.id_business;
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
@@ -113,7 +118,11 @@ const recommendationByBusiness = async (req, res) => {
     }
 
   try {
-      const request = await axios.get(`https://recommender.kutoko.id/v1/businesses/${business_id}/similar`)
+    const token = process.env.ML_TOKEN;
+      const request = await axios.get(`https://recommender.kutoko.id/v1/businesses/${business_id}/similar`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+      }})
       const data = request.data.data;
 
       const url = "https://via.placeholder.com/450/DBDBDB?text=";

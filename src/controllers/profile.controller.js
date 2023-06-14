@@ -3,11 +3,13 @@ const validator = require('fastest-validator');
 const helper = require('../helpers/helpers')
 const bcrypt = require('bcrypt');
 const moment = require("moment");
+const DB = require('../config/knex');
 
 const detail = async (req, res) =>{
-   const idparam = helper.getUserId(req);
+   const {user_id} = await helper.getUserId(req);
+   console.log(user_id)
     try {
-        const user = await users.findOne({where: {id: idparam}})
+        const user = await DB('users').where({id: user_id}).first();
         if (!user) {
             return res.status(400).json({
                 error : true,
