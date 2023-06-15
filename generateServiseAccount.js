@@ -20,5 +20,6 @@ const envVariables = {
 // Convert the object to JSON
 const jsonData = JSON.stringify(envVariables, null, 2);
 
+console.log(jsonData);
 // Write the JSON data to a file
 fs.writeFileSync('serviceAccount.json', jsonData);
