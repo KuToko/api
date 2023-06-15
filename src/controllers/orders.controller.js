@@ -4,6 +4,7 @@ const helpers = require('../helpers/helpers');
 const uuid = require('uuid');
 const moment = require('moment');
 const validator = require('fastest-validator');
+const axios = require("axios");
 
 const store = async (req, res) => {
     const dataBody = req.body;
@@ -39,7 +40,48 @@ const store = async (req, res) => {
                 message: "Business not found"
             });
         }
-
+        //
+        // var expiry = parseInt(Math.floor(new Date()/1000) + (24*60*60));
+        // const merchan_ref = uuid.v4();
+        // const signatur = helpers.signature_transaksi(merchan_ref, dataBody.total_price);
+        // const dataPayment = {
+        //     id: uuid.v4(),
+        //     user_id: helpers.getUserId(req),
+        //     business_id: dataBody.business_id,
+        //     amount : dataBody.total_price,
+        //     order_details: dataBody.order_details,
+        //     expired_time : expiry,
+        //     signature   : signatur
+        // }
+        //
+        // const payload = JSON.stringify(dataPayment);
+        // axios.post('https://tripay.co.id/api/transaction/create', payload, {
+        //     headers: {
+        //         'Authorization': 'Bearer ' + process.env.TRIPAY_API_KEY,
+        //     }, validateStatus: function (status) {
+        //         return status < 999; //ignore status code
+        //     }
+        // }).then(async (response) => {
+        //     console.log(response);
+        //     if (response.status == 'success') {
+        //         await payments.create({
+        //             id:uuid.v4(),
+        //             user_id: helpers.getUserId(req),
+        //
+        //         }, {transaction: t});
+        //     }
+        // })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+        //
+        // const payment = {
+        //     id: uuid.v4(),
+        //     user_id: helpers.getUserId(req),
+        //     payments_method_id: dataBody.paymentMethod,
+        //     is_paid: false,
+        //     merchant_ref: merchan_ref,
+        // }
         const data = {
             id: uuid.v4(),
             user_id:helpers.getUserId(req),
@@ -52,7 +94,6 @@ const store = async (req, res) => {
             updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
         };
 
-        console.log(data);
         await orders.create(data, {transaction: t});
 
         let detailOrder = []
@@ -67,7 +108,7 @@ const store = async (req, res) => {
             })
         }
         for (let i = 0; i < detailOrder.length; i++) {
-           result = await order_details.create(detailOrder[i],{
+            await order_details.create(detailOrder[i],{
                 transaction: t
             })
         }
