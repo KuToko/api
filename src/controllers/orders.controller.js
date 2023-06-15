@@ -1,4 +1,4 @@
-let {orders, order_details, payments, businesses, users} = require('../models');
+let {orders, order_details, payments, businesses, users, sequelize} = require('../models');
 const DB = require('../config/knex');
 const helpers = require('../helpers/helpers');
 const uuid = require('uuid');
@@ -26,6 +26,8 @@ const store = async (req, res) => {
         });
     }
 
+    const t = await sequelize.transaction();
+
     try {
         const cekBusiness = await businesses.findOne({
             where: {
@@ -51,7 +53,7 @@ const store = async (req, res) => {
         };
 
         console.log(data);
-        await orders.create(data);
+        await orders.create(data, {transaction: t});
 
         let detailOrder = []
         for (let i = 0; i < detail.length; i++) {
@@ -65,8 +67,11 @@ const store = async (req, res) => {
             })
         }
         for (let i = 0; i < detailOrder.length; i++) {
-           result = await order_details.create(detailOrder[i])
+           result = await order_details.create(detailOrder[i],{
+                transaction: t
+            })
         }
+        await t.commit();
          return res.status(201).json({
              errors: false,
              message: "Order created successfully",
@@ -76,6 +81,7 @@ const store = async (req, res) => {
              }
          });
     }catch (err) {
+        await t.rollback();
         console.log(err);
         return res.status(500).json({
             message: "Something went wrong"
