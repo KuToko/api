@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/KuToko/api#readme",
   "dependencies": {
-    "@google-cloud/storage": "^6.10.1",
+    "@google-cloud/storage": "^6.11.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "busboy": "^1.6.0",
@@ -29,6 +29,7 @@
     "express-fileupload": "^1.4.0",
     "fastest-validator": "^1.17.0",
     "fs": "^0.0.1-security",
+    "google-auth-library": "^8.8.0",
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",
     "knex-paginate": "^3.1.1",

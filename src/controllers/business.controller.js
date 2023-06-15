@@ -45,7 +45,7 @@ const search = async (req, res) => {
             DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
-              6371 * ACOS(
+              6371000 * ACOS(
                 COS(RADIANS(CAST(latitude AS FLOAT))) *
                 COS(RADIANS(CAST(? AS FLOAT))) *
                 COS(RADIANS(CAST(longitude AS FLOAT)) - RADIANS(CAST(? AS FLOAT))) +
@@ -54,7 +54,7 @@ const search = async (req, res) => {
               ) AS distance_in_m
             `, [latitude, longitude, latitude]),
             DB.raw(`
-              6371 * ACOS(
+              6371000 * ACOS(
                 COS(RADIANS(CAST(latitude AS FLOAT))) *
                 COS(RADIANS(CAST(? AS FLOAT))) *
                 COS(RADIANS(CAST(longitude AS FLOAT)) - RADIANS(CAST(? AS FLOAT))) +
@@ -223,7 +223,7 @@ const list = async (req, res) => {
             DB.raw(" CAST(count(upvotes.id) AS INTEGER) AS upvotes"),
             DB.raw("json_agg(json_build_object('id',categories.id,'name',categories.name)) AS categories"),
             DB.raw(`
-              6371 * ACOS(
+              6371000 * ACOS(
                 COS(RADIANS(CAST(latitude AS FLOAT))) *
                 COS(RADIANS(CAST(? AS FLOAT))) *
                 COS(RADIANS(CAST(longitude AS FLOAT)) - RADIANS(CAST(? AS FLOAT))) +
@@ -232,7 +232,7 @@ const list = async (req, res) => {
               ) AS distance_in_m
             `, [latitude, longitude, latitude]),
             DB.raw(`
-              6371 * ACOS(
+              6371000 * ACOS(
                 COS(RADIANS(CAST(latitude AS FLOAT))) *
                 COS(RADIANS(CAST(? AS FLOAT))) *
                 COS(RADIANS(CAST(longitude AS FLOAT)) - RADIANS(CAST(? AS FLOAT))) +
