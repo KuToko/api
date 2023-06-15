@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-
 const DB = require('../config/knex');
 
 const getUserId = (req) => {
@@ -15,24 +14,6 @@ const getUserId = (req) => {
   }
 };
 
-const signatureCallback = (json) =>
-{
-  const privateKey = process.env.TRIPAY_API_KEY;
-  return crypto.createHmac("sha256", privateKey)
-      .update(json)
-      .digest('hex');
-}
-
-const signature_transaksi = async (merchant_ref, amount) => {
-    const privateKey = process.env.PRIVATE_KEY;
-    const merchant_code = process.env.MERCHANT_CODE;
-    return crypto.createHmac("sha256", privateKey)
-        .update(merchant_code + merchant_ref + amount)
-        .digest("hex");
-}
-
 module.exports = {
   getUserId,
-  signatureCallback,
-  signature_transaksi
 };

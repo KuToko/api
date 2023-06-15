@@ -42,7 +42,7 @@ const jwtSecret = process.env.JWT_SECRET;
         }
         const cekToken = await tokens.findOne({where: {user_id: user.id}});
         if (cekToken) {
-            await tokens.destroy({where: {user_id: cekToken.id}});
+            await tokens.destroy({where: {user_id: user.id}});
         }
         const createtoken = jwt.sign({
             id: user.id,
@@ -56,7 +56,7 @@ const jwtSecret = process.env.JWT_SECRET;
                 data: "internal server error"
             });
         }
-        const created = await tokens.create({
+        await tokens.create({
             id: uuid.v4(),
             user_id: user.id,
             token: createtoken,
@@ -67,7 +67,7 @@ const jwtSecret = process.env.JWT_SECRET;
 
         res.status(200).json({
             message: "success",
-             data: {
+            data: {
                 avatar: "https://via.placeholder.com/450/DBDBDB?text=" + user.name,
                 username: user.username,
                 email: user.email,
