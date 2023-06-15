@@ -1,4 +1,4 @@
-const {users, upvotes, businesses} = require("../models");
+    const {users, upvotes, businesses} = require("../models");
 const validator = require("fastest-validator");
 const uuid = require("uuid");
 const helper = require('../helpers/helpers')

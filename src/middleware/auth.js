@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
   const bearerHeader = req.headers.authorization;
   if (bearerHeader) {
       const token = await tokens.findOne({where: {token: bearerHeader.split(" ")[1]}});
-        if(!token){
+      if(!token){
             return res.status(403).json({
                 error : true,
                 message: "errors",
@@ -21,13 +21,14 @@ const auth = async (req, res, next) => {
                 data: "forbidden"
             });
         }
+      // next();
     const verifyToken = token.token;
-     jwt.verify(verifyToken, jwtSecret, (err, data) => {
+     jwt.verify(verifyToken, process.env.JWT_SECRET, (err, data) => {
       if (err) {
         return res.status(403).json({
           error : true,
           message: "expired",
-          data: "forbidden"
+          data: err
         });
       }
       req.userData = data;
