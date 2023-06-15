@@ -39,6 +39,7 @@ const userRegister = async (req, res) => {
           try {
               const salt = await bcrypt.genSalt(10);
               const hashedPassword = await bcrypt.hash(data.password, salt);
+              data.password = hashedPassword;
               const uniqueEmail = await users.findOne({where: {email: data.email}});
               if (uniqueEmail) {
                   return res.status(400).json({

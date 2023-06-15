@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
-const crypto = require("crypto");
-require('dotenv').config();
+
+const DB = require('../config/knex');
+
 const getUserId = (req) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const token = req.headers.authorization.split(' ')[1];  
+    const userId = DB('tokens').where({ token }).select('user_id').first();
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    return decoded.id;
+    return userId;
   } catch (error) {
     console.log(error);
     throw new Error('Invalid token');

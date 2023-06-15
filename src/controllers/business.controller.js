@@ -264,6 +264,34 @@ const list = async (req, res) => {
     }
 }
 
+const mine = async (req, res) => {
+    try{
+        const user_id = helpers.getUserId(req);
+        const url = "https://via.placeholder.com/450/DBDBDB?text=";
+
+        const businesses = await DB('businesses')
+        .select(
+            'id',
+            'name',
+            DB.raw(`case when avatar is null then null else concat(CAST(? AS VARCHAR), businesses.name) end as avatar`, [url]),
+        )
+        .where({claim_by: user_id})
+
+        return res.status(200).json({
+            error: false,
+            message: "Success",
+            data: businesses,
+        });
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            error: true,
+            message: "Something went wrong",
+        });
+    }
+}
+
 module.exports = {
-    list, detail, search
+    list, detail, search, mine
 }
