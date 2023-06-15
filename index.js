@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 const routesV1 = require('./src/routes/v1');
 const DB = require('./src/config/knex');
 const { attachPaginate } = require('knex-paginate');
+
 attachPaginate();
 
 
@@ -26,3 +27,4 @@ app.use("/v1", routesV1);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+

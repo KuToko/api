@@ -1,4 +1,4 @@
-const {users, upvotes, businesses} = require("../models");
+    const {users, upvotes, businesses} = require("../models");
 const validator = require("fastest-validator");
 const uuid = require("uuid");
 const helper = require('../helpers/helpers')
@@ -8,12 +8,10 @@ const DB = require('../config/knex');
 
 const list=async (req, res) => {
 
-
     const page = req.query.page;
     const limit = 10;
     try {
-        const idUser = helper.getUserId(req);
-        
+
         const votes = await DB('upvotes')
         .where({user_id: idUser})
         .paginate({perPage: limit, currentPage: page});
@@ -84,7 +82,7 @@ const detail = async (req, res) => {
         });
     }
 }
-const store = async (req, res) => {    
+const store = async (req, res) => {
     const data={
             business_id: req.body.business_id,
     }
@@ -125,6 +123,7 @@ const store = async (req, res) => {
             business_id: data.business_id,
             created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
             updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
+
         })
         res.status(200).json({
             error: false,
